@@ -1,4 +1,4 @@
-circular-leduino
+circleduino
 ================
 
 Arduino library for Circular LED bargraph
