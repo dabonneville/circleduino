@@ -13,10 +13,11 @@ class Circleduino
 	public:
 		Circleduino(uint8_t dataPin, uint8_t clockPin, uint8_t latchPin);
 		void clear();
-		void write(boolean values[]);
+		void writeAll(boolean values[]);
 		void writePin(int index, int value);
 
 	private:
+		void writeValues();
 
 };
 
