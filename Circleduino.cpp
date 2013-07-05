@@ -1,23 +1,33 @@
 /*
-  Library to control the Circular LED bargraphs
-*/
+ Arduino Library for Circular LED Bargraphs
+ go to https://www.sparkfun.com/products/10595 for more information
+
+ License: CC BY-SA 3.0: Creative Commons Share-alike 3.0. Feel free 
+ to use and abuse this code however you'd like. If you find it useful
+ please attribute, and SHARE-ALIKE!
+ 
+ Created July 2013
+ by Jonathan Ruiz de Garibay
+
+ Notes:
+   In the Bargraph board, CLR pin must be connected on Vcc and EN pin on GND.
+
+ */ 
 
 #include "Arduino.h"
 #include "Circleduino.h"
 
-int _dataPin;				//pin 14 on the 75HC595
-int _latchPin;				//pin 12 on the 75HC595
-int _clockPin;				//pin 11 on the 75HC595
-
-boolean _registers[16];
-
-Circleduino::Circleduino(uint8_t dataPin, uint8_t clockPin, uint8_t latchPin){
+//
+// Constructor
+//
+// It is necesary indicate clock, data and lanch pins.
+Circleduino::Circleduino(uint8_t dataPin, uint8_t clkPin, uint8_t latchPin){
 
 	_dataPin = dataPin;
 	pinMode(_dataPin, OUTPUT);
 
-	_clockPin = clockPin;
-	pinMode(_clockPin, OUTPUT);
+	_clkPin = clkPin;
+	pinMode(_clkPin, OUTPUT);
 
 	_latchPin = latchPin;
 	pinMode(_latchPin, OUTPUT);
@@ -28,8 +38,12 @@ Circleduino::Circleduino(uint8_t dataPin, uint8_t clockPin, uint8_t latchPin){
 }                             
 
 
-//set all register pins to LOW
+//
+// clear
+//
+// Set all register pins to LOW
 void Circleduino::clear(){
+
 	for(int i = 15; i >=  0; i--){
 		_registers[i] = LOW;
 	}
@@ -38,8 +52,12 @@ void Circleduino::clear(){
 	writeValues();
 } 
 
-//set all pins HIGH or LOW
-void Circleduino::writeAll(boolean values[]){
+//
+// writeAll
+//
+// Set each pin HIGH or LOW
+void Circleduino::setAll(boolean values[]){
+
   for(int i = 15; i >=  0; i--){
      _registers[i] = values[i];
   }
@@ -48,25 +66,32 @@ void Circleduino::writeAll(boolean values[]){
   writeValues();
 }
 
-void Circleduino::writePin(int index, int value){
+//
+// writePin
+//
+// set one pin HIGH or LOW
+void Circleduino::setPin(uint8_t index, uint8_t value){
+
 	_registers[index] = value;
 
 	//set pins
 	writeValues();
 }
 
-//Set and display registers
+//
+// writeAll
+//
+// Set and display registers
 void Circleduino::writeValues(){
 
 	digitalWrite(_latchPin, LOW);
-
 	for(int i = 15; i >=  0; i--){
-		digitalWrite(_clockPin, LOW);
+		digitalWrite(_clkPin, LOW);
 
 		int value = _registers[i];
 
 		digitalWrite(_dataPin, value);
-		digitalWrite(_clockPin, HIGH);
+		digitalWrite(_clkPin, HIGH);
 
 	}
 	digitalWrite(_latchPin, HIGH);
